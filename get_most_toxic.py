@@ -20,18 +20,18 @@ def get_above_threshold(prompts, threshold, threshold_on="toxicity"):
     return [x for x in prompts if x['scores'][threshold_on] >= threshold]
 
 if __name__ == "__main__":
-    dir = "results/gemma-7b-q4_k_m.gguf"
-    # dir = "results/meta-llama-3-8b-q4_k_s.gguf"
-    # dir = "results/mistral-7b-v0.1-q4_k_m.gguf"
+    dir = "results/bloom"
+    dir = "results/llama"
+    dir = "results/mistral"
 
     load_path = dir + "/toxic.jsonl"
 
     prompts = read_prompts(load_path)
 
-    n = 100
+    n = 20
     sort_on = "toxicity"
 
-    threshold = 0.9
+    threshold = 0.95
     threshold_on = "toxicity"
     
     most_toxic = get_top_n(prompts, n, sort_on)
