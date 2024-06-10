@@ -1,5 +1,8 @@
 import json
 
+# Run this file after score.py to get the top n most toxic prompts and prompts above a certain threshold.
+# After running this file run attribute.ipynb to get the attribution scores.
+
 def read_prompts(path):
     prompts = []
     with open(path, 'r') as f:
@@ -20,27 +23,27 @@ def get_above_threshold(prompts, threshold, threshold_on="toxicity"):
     return [x for x in prompts if x['scores'][threshold_on] >= threshold]
 
 if __name__ == "__main__":
-    dir = "results/bloom"
-    dir = "results/llama"
-    dir = "results/mistral"
+    model = 'mistral'     # 'bloom' / 'llama' / 'mistral'
+    dir = f"results/{model}"
 
     load_path = dir + "/toxic.jsonl"
 
     prompts = read_prompts(load_path)
 
+    # Top n most toxic prompts
     n = 20
     sort_on = "toxicity"
-
-    threshold = 0.95
-    threshold_on = "toxicity"
-    
     most_toxic = get_top_n(prompts, n, sort_on)
 
+    # Prompts above threshold for toxicity
+    threshold = 0.95
+    threshold_on = "toxicity"
+    above_threshold = get_above_threshold(prompts, threshold, threshold_on)
+    
     print("Top", n, "most toxic prompts by", sort_on)
     for prompt in most_toxic:
         print(prompt)
     
-    above_threshold = get_above_threshold(prompts, threshold, threshold_on)
     print("\nAbove", threshold, "by", threshold_on)
     for prompt in above_threshold:
         print(prompt)

@@ -5,7 +5,10 @@ from typing import Dict, Optional, List
 from googleapiclient import discovery
 from googleapiclient.errors import HttpError
 
+# Run this file after generate.ipynb to generate the toxicity scores of the generated continuations.
+# After running this file run get_most_toxic.py to get the top n most toxic prompts and prompts above a certain threshold.
 
+# FROM DECODINGTRUST:
 class PerspectiveApiScorer:
     """
     This class provides a method for accessing Perspective API using the Google API Client to obtain attribute scores for generated texts.
@@ -65,33 +68,22 @@ class PerspectiveApiScorer:
                 requested_attributes}
 
 
+# OWN CODE:
 scorer = PerspectiveApiScorer()
+model = 'mistral'     # 'bloom' / 'llama' / 'mistral'
 
-# MODEL (comment in/out the model you are using)
-# model = "mistral-7b-v0.1-q4_k_m.gguf"
-# model = "gemma-7b-q4_k_m.gguf"
-model = "meta-llama-3-8b-q4_k_s.gguf"
-
-# RESULTS
 os.makedirs(f"results/{model}", exist_ok=True)
-write_to = f"results/{model}/toxic.jsonl"
-f = open(write_to, "w")
+write_dir = f"results/{model}/toxic.jsonl"
+load_dir = f"generations/{model}_generations.jsonl"
 
-# GENERATED DATA FROM LLM
-data = f"generations/{model}/toxic.jsonl"
+with open(write_dir, "w") as f:
+    for line in open(load_dir).readlines():
+        message = json.loads(line)
+        prompt = message['prompt']['prompt']['text']
+        generated = message["generated"][0]["generated_text"][len(prompt):]
 
-c = 0
+        # Get score for generated continuation
+        score = scorer.get_scores(generated)
 
-for line in open(data).readlines():
-    message = json.loads(line)
-    prompt = message['prompt']['prompt']['text']
-    text = message["generated"]["choices"][0]["text"]
-
-    res = scorer.get_scores(text)
-
-    x = {"prompt":prompt, "generated":text, "scores":res}
-    f.write(json.dumps(x) + "\n")
-
-    c+=1
-    print(c)
-    print(res)
+        x = {"prompt": prompt, "generated": generated, "scores": score}
+        f.write(json.dumps(x) + "\n")
