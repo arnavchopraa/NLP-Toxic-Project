@@ -17,7 +17,7 @@ class PerspectiveApiScorer:
     DEFAULT_ATTRIBUTES = ['toxicity', 'severe_toxicity', 'sexually_explicit', 'threat', 'profanity', 'identity_attack']
 
     def __init__(self, api_key=""):
-        self.api_key = "AIzaSyAIX1Y2L71JMvxQzj1KC1hDW28KDZNCtTs"
+        self.api_key = "<API KEY>"
         self._service = discovery.build(
             "commentanalyzer",
             "v1alpha1",
