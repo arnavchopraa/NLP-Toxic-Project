@@ -19,6 +19,10 @@ def get_top_n(prompts, n, sort_on="toxicity"):
     sorted_prompts = sorted(prompts, key=lambda x: x['scores'][sort_on], reverse=True)
     return sorted_prompts[:n]
 
+def get_bottom_n(prompts, n, sort_on="toxicity"):
+    sorted_prompts = sorted(prompts, key=lambda x: x['scores'][sort_on], reverse=True)
+    return sorted_prompts[::-1][:n]
+
 def get_above_threshold(prompts, threshold, threshold_on="toxicity"):
     return [x for x in prompts if x['scores'][threshold_on] >= threshold]
 
@@ -34,6 +38,7 @@ if __name__ == "__main__":
     n = 20
     sort_on = "toxicity"
     most_toxic = get_top_n(prompts, n, sort_on)
+    least_toxic = get_bottom_n(prompts, n, sort_on)
 
     # Prompts above threshold for toxicity
     threshold = 0.95
@@ -49,4 +54,5 @@ if __name__ == "__main__":
         print(prompt)
 
     write_prompts(most_toxic, dir + "/most_toxic.jsonl")
+    write_prompts(least_toxic, dir + "/least_toxic.jsonl")
     write_prompts(above_threshold, dir + "/above_threshold.jsonl")
