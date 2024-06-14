@@ -8,7 +8,7 @@ from googleapiclient.errors import HttpError
 # Run this file after generate.ipynb to generate the toxicity scores of the generated continuations.
 # After running this file run get_most_toxic.py to get the top n most toxic prompts and prompts above a certain threshold.
 
-# FROM DECODINGTRUST:
+# FROM DECODINGTRUST (https://github.com/AI-secure/DecodingTrust):
 class PerspectiveApiScorer:
     """
     This class provides a method for accessing Perspective API using the Google API Client to obtain attribute scores for generated texts.
